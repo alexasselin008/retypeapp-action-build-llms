@@ -1,0 +1,36 @@
+{
+  "input": "./src",
+  "output": ".retype",
+  "favicon": "assets/sakura-icon.svg",
+  "branding":
+  {
+    "label": "Docs",
+    "logo": "assets/logo.png",
+    "logoDark": "assets/logo-dark.png"
+  },
+  "meta": {
+    "title": " | SakuraCasino Documentation"
+  },
+  "links": [
+    {
+      "text": "GitHub",
+      "link": "https://github.com/sakuracasino"
+    },
+    {
+      "text": "Discord",
+      "link": "https://discord.gg/DHux5uEvrJ"
+    },
+    {
+      "text": "Telegram",
+      "link": "https://t.me/sakuracasino"
+    }
+  ],
+  "footer": {
+    "copyright": "&copy; Copyright {{ year }}. [Sakura Casino](https://sakura.casino) All rights reserved."
+  },
+  "integrations": {
+    "googleAnalytics": {
+      "id": "G-K80RM9Z2K3"
+    }
+  }
+}

@@ -1,0 +1,42 @@
+{
+    "name": "@alexasselin/retypeapp-build-llms-action",
+    "author": "Alexandre Asselin",
+    "version": "0.0.0",
+    "description": "A GitHub Action to build both a llms.txt and llms-full.txt files for a Retype powered website.",
+    "private": true,
+    "type": "module",
+    "license": "Apache-2.0",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/alexasselin008/retypeapp-action-build-llms.git"
+    },
+    "scripts": {
+        "build": "rslib build --config ./rslib.build.ts",
+        "eslint": "eslint . --max-warnings=-0 --cache --cache-location node_modules/.cache/eslint",
+        "typecheck": "tsc",
+        "test": "vitest --config vitest.config.ts --no-watch --passWithNoTests"
+    },
+    "dependencies": {
+        "@actions/core": "1.11.1",
+        "yaml": "2.8.1",
+        "zod": "4.0.17"
+    },
+    "devDependencies": {
+        "@changesets/changelog-github": "0.5.1",
+        "@changesets/cli": "2.29.5",
+        "@rsbuild/core": "1.4.15",
+        "@rslib/core": "0.11.2",
+        "@typescript-eslint/parser": "8.39.0",
+        "@workleap/eslint-plugin": "3.5.0",
+        "@workleap/rslib-configs": "1.1.0",
+        "@workleap/typescript-configs": "3.0.4",
+        "eslint": "8.57.1",
+        "typescript": "5.9.2",
+        "vitest": "3.2.4"
+    },
+    "engines": {
+        "node": ">=22.0.0"
+    },
+    "sideEffects": false,
+    "packageManager": "pnpm@9.5.0+sha512.140036830124618d624a2187b50d04289d5a087f326c9edfc0ccd733d76c4f52c3a313d4fc148794a2a9d81553016004e6742e8cf850670268a7387fc220c903"
+}

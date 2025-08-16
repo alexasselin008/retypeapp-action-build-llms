@@ -1,0 +1,36 @@
+name: Retype Build LLMs File Action
+author: Alexandre Asselin
+description: |-
+  Builds llms.txt files from the Retype documentation. The output from this step can be
+  published to the hosting of choice.
+inputs:
+  output:
+    description: |-
+      Custom folder to store the output from the Retype build process. Default is `""` (empty).
+    required: false
+    default: ''
+  override:
+    description: |-
+      JSON configuration overriding project config values. Default is "" (empty).
+    required: false
+    default: ''
+  verbose:
+    description: |-
+      Enable verbose logging during build process. Default is false.
+    required: false
+    default: 'false'
+  config_path:
+    description: |-
+      Path to the retype.yml file. May point to a directory, a JSON or YAML
+      file. If a directory, Retype will look for the 'retype.[yml|yaml|json]'
+      file in this directory.
+    default: ''
+outputs:
+  retype-output-path:
+    description: |-
+      Path to the Retype output that can be referenced in other steps
+      within the same workflow.
+    value: ${{ steps.retype-build.outputs.retype-output-path }}
+runs:
+  using: "node22"
+  main: "dist/index.js"

@@ -1,0 +1,117 @@
+poweredByRetype: true
+
+outbound:
+  exclude:
+    - retype.com
+    - github.com
+
+breadcrumb:
+  home: ":icon-home:"
+
+toc:
+  label: On this page
+  depth: 2-4
+
+nav:
+  mode: stack   # Pro key required
+  icons:
+    mode: pages # Pro key required
+
+theme:
+  base:
+    # Catppuccin Theme: Latte
+    #base-color: "#8839ef"
+    #base-bg: "#eff1f5"
+    #primary: "#1e66f5" # Blue
+    #success: "#40a02b" # Green
+    #danger: "#d20f39"  # Red
+    #warning: "#df8e1d" # Yellow
+    #royal: "#7287fd"   # Lavender
+
+    base-link-weight: 500
+    nav-item-text-active-weight: 700
+    image-rounded: 0.75rem
+  dark:
+    # Catppuccin Theme: Frappé
+    #base-color: "#ca9ee6"
+    #base-bg: "#303446"
+    #primary: "#8caaee" # Blue
+    #success: "#a6d189" # Green
+    #danger: "#e78284"  # Red
+    #warning: "#e5c890" # Yellow
+    #royal: "#babbf1"   # Lavender
+
+# New Hub link feature, but not used on retype.com
+# hub:
+  # link: https://example.com/
+  # alt: Go to example.com
+  # target: _blank
+
+# Start in "Pro Mode" trial
+start:
+  pro: true
+
+# -------------------
+# Retype
+# -------------------
+
+input: ./
+output: .retype
+url: retype.com
+
+branding:
+  logo: /static/retype-logo.svg
+  logoDark: /static/retype-logo-dark.svg
+  label: v3.12 next
+  #baseColor: "#3D855E" # Try NEW base color theme setting
+
+meta:
+  title: " - Write On! with Retype"
+
+generator:
+  paths: root
+
+edit:
+  repo: github.com/retypeapp/retype
+
+links:
+  - text: Pro Pricing
+    link: /pro/pro.md
+    icon: verified
+
+  - text: Blog & News
+    link: /blog/
+    icon: rss
+
+  - text: Support
+    link: https://github.com/retypeapp/retype/issues
+    icon: comment-discussion
+    target: blank
+
+  - text: Social
+    link: https://twitter.com/retypeapp/
+    icon: mention
+    target: blank
+
+data:
+  version: "3.12.0-preview2"
+  abbreviations:
+    HTML: Hyper Text Markup Language
+    CSS: Cascading Style Sheet
+
+templating:
+  loopLimit: 2000
+
+footer:
+  # Let's demonstrate the power of Retype templating
+  # by using an include for the footer
+  copyright: "{{ include \"snippets/footer\" }}"
+
+  links:
+    - text: About
+      link: about.md
+      icon: question
+
+    - text: License
+      link: license.md
+      icon: shield-check

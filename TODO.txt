@@ -2,3 +2,4 @@
 - Find the best tool to parse yaml file to parse the retype.yaml file
 - Find the best way to parse custom retype component to convert them to something that is consumable by llms. For instance Badges can be simplified to links
 
+- Replace zod with valibot
