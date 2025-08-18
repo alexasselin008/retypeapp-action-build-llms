@@ -1,26 +1,22 @@
-import { defineBuildConfig } from "@workleap/rslib-configs";
-import path from "node:path";
+import { defineConfig } from "@rslib/core";
 
-export default defineBuildConfig({
-    bundle: true,
-    entry: {
-        index: "./src/index.ts"
+export default defineConfig({
+    source: {
+        entry: { index: "./src/index.ts" }
     },
-    tsconfigPath: path.resolve("./tsconfig.build.json"),
-    target: "node",
-    dts: false,
-    sourceMap: false,
-    transformers: [
-        config => {
-            config.lib = [{
-                autoExternal: {
-                    dependencies: false,
-                    optionalDependencies: false,
-                    peerDependencies: false
-                }
-            }];
-
-            return config;
+    output: {
+        distPath: { root: "./dist" },
+        sourceMap: false,
+        legalComments: "none"
+    },
+    lib: [
+        {
+            format: "esm",
+            autoExternal: false, // bundle all deps
+            dts: false,
+            output: {
+                filename: { js: "index.js" }
+            }
         }
     ]
 });
