@@ -84,6 +84,12 @@ function findRetypeConfig(configPath: string) {
     const verbose = getOptionalInput("verbose") ?? false;
     const config_path = getOptionalInput("config_path") ?? "";
 
+    const configTest = path.resolve(".");
+    const configTest2 = path.resolve(process.cwd(), ".");
+    core.info(`Config Test: ${configTest}`);
+    core.info(`Config Test 2: ${configTest2}`);
+    core.info(`Inputs AA ${output} |  ${override} |  ${verbose} | ${config_path}`);
+
     if (verbose) {
         core.info(`Inputs ${output} ${override} ${verbose} ${config_path}`);
     }
