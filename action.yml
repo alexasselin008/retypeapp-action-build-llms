@@ -32,5 +32,5 @@ outputs:
       within the same workflow.
     value: ${{ steps.retype-build.outputs.retype-output-path }}
 runs:
-  using: "node24"
+  using: "node20"
   main: "dist/index.js"

@@ -11,7 +11,7 @@ export default defineConfig({
     },
     lib: [
         {
-            format: "esm",
+            format: "cjs",
             autoExternal: false, // bundle all deps
             dts: false,
             output: {

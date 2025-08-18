@@ -46,6 +46,7 @@ function setOutput<T extends keyof ActionOutput>(name: T, value: ActionOutput[T]
 }
 
 function listFiles(dir: string) {
+    // TODO: won't work with node 20
     const files = fs.readdirSync(dir, { encoding: "utf8", recursive: true });
 
     return files;
