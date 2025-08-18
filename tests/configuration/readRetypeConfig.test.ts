@@ -1,7 +1,7 @@
 
 import path from "path";
 import { describe, expect, it } from "vitest";
-import { readRetypeConfig } from "../../src/configuration/readRetypeConfig.ts";
+import { readRetypeConfig } from "../../src/readRetypeConfig.ts";
 
 const configs = [
     {

@@ -25826,6 +25826,11 @@ var __webpack_exports__ = {};
     function superRefine(fn) {
         return _superRefine(fn);
     }
+    const RETYPE_FILENAMES = [
+        "retype.yml",
+        "retype.yaml",
+        "retype.json"
+    ];
     const RetypeConfigSchema = schemas_object({
         input: schemas_string().optional(),
         output: schemas_string().optional(),
@@ -25943,26 +25948,30 @@ var __webpack_exports__ = {};
             throw e;
         }
     }
-    const RETYPE_FILENAMES = [
-        "retype.yml",
-        "retype.yaml",
-        "retype.json"
-    ];
     function getOptionalInput(name) {
         return lib_core.getInput(name);
     }
     function setOutput(name, value) {
         lib_core.setOutput(name, String(value));
     }
-    function listFiles(dir) {
-        const files = external_node_fs_default().readdirSync(dir, {
+    function readDirRecursiveSync(dir) {
+        const result = [];
+        for (const entry of external_node_fs_default().readdirSync(dir, {
             encoding: "utf8",
-            recursive: true
-        });
+            withFileTypes: true
+        })){
+            const fullPath = external_node_path_default().join(dir, entry.name);
+            if (entry.isDirectory()) result.push(...readDirRecursiveSync(fullPath));
+            else result.push(fullPath);
+        }
+        return result;
+    }
+    function listFiles(dir) {
+        const files = readDirRecursiveSync(dir);
         return files;
     }
     function findRetypeConfig(configPath) {
-        const stat = external_node_fs_default().statSync(external_node_path_default().resolve(configPath));
+        const stat = external_node_fs_default().statSync(configPath);
         if (stat.isFile()) {
             const ext = external_node_path_default().extname(configPath).toLowerCase();
             if ([
@@ -25986,22 +25995,16 @@ var __webpack_exports__ = {};
         const override = getOptionalInput("override");
         const verbose = getOptionalInput("verbose") ?? false;
         const config_path = getOptionalInput("config_path") ?? "";
-        const configTest = external_node_path_default().resolve(".");
-        const configTest2 = external_node_path_default().resolve(process.cwd(), ".");
-        lib_core.info(`Config Test: ${configTest}`);
-        lib_core.info(`Config Test 2: ${configTest2}`);
-        lib_core.info(`Inputs AA ${output} |  ${override} |  ${verbose} | ${config_path}`);
         if (verbose) lib_core.info(`Inputs ${output} ${override} ${verbose} ${config_path}`);
-        const resolvedConfigPath = findRetypeConfig(config_path);
+        const resolvedConfigPath = findRetypeConfig(external_node_path_default().resolve(config_path));
         const config = await readRetypeConfig(resolvedConfigPath);
         if (verbose) lib_core.info(`Config Detected at ${resolvedConfigPath}: ${JSON.stringify(config)}`);
-        const mdxFilesLocations = config.input ?? ".";
-        const test = external_node_path_default().resolve(mdxFilesLocations);
-        const test2 = external_node_path_default().resolve(process.cwd(), mdxFilesLocations);
-        if (verbose) lib_core.info(`Trying to resolve input folder: ${mdxFilesLocations} ${test} ${test2}`);
+        const mdxFilesLocations = external_node_path_default().resolve(config.input ?? ".");
+        if (verbose) lib_core.info(`Trying to resolve input folder: ${mdxFilesLocations}`);
         const mdxFiles = listFiles(mdxFilesLocations);
         if (verbose) lib_core.info(`Files to process: ${JSON.stringify(mdxFiles)}`);
         const outputPath = output ?? config.output ?? ".retype";
+        if (verbose) lib_core.info(`Outputs ${outputPath}`);
         setOutput("retype-output-path", outputPath);
     })().catch((err)=>{
         lib_core.error(err);

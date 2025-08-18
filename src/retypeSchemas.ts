@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+export const RETYPE_FILENAMES = ["retype.yml", "retype.yaml", "retype.json"];
+
 /**
 * Retype project configuration (retype.yml)
 * All properties optional. Comments summarize the official docs.

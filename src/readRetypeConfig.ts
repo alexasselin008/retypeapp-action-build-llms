@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { parse as parseYAML } from "yaml";
 import { z } from "zod";
-import { RetypeConfigSchema, type RetypeConfig } from "./retypeSchema.ts";
+import { RetypeConfigSchema, type RetypeConfig } from "./retypeSchemas.ts";
 
 export async function readRetypeConfig(filePath: string): Promise<RetypeConfig> {
     const raw = await readFile(filePath, "utf8");

@@ -1,7 +1,8 @@
 import * as core from "@actions/core";
 import fs from "node:fs";
 import path from "node:path";
-import { readRetypeConfig } from "./configuration/readRetypeConfig.ts";
+import { readRetypeConfig } from "./readRetypeConfig.ts";
+import { RETYPE_FILENAMES } from "./retypeSchemas.ts";
 
 interface ActionInputs {
     /**
@@ -35,7 +36,6 @@ interface ActionOutput {
      */
     "retype-output-path"?: string;
 }
-const RETYPE_FILENAMES = ["retype.yml", "retype.yaml", "retype.json"];
 
 function getOptionalInput<T extends keyof ActionInputs>(name: T) {
     return core.getInput(name) as ActionInputs[T];
@@ -44,16 +44,34 @@ function getOptionalInput<T extends keyof ActionInputs>(name: T) {
 function setOutput<T extends keyof ActionOutput>(name: T, value: ActionOutput[T]) {
     core.setOutput(name, String(value));
 }
+/**
+ * This is doable natively with node 22+, but we need to support node 20
+ */
+function readDirRecursiveSync(dir: string) {
+    const result: string[] = [];
+
+    for (const entry of fs.readdirSync(dir, { encoding: "utf8", withFileTypes: true })) {
+        const fullPath = path.join(dir, entry.name);
+
+        if (entry.isDirectory()) {
+            result.push(...readDirRecursiveSync(fullPath));
+        } else {
+            result.push(fullPath);
+        }
+    }
+
+    return result;
+}
 
 function listFiles(dir: string) {
     // TODO: won't work with node 20
-    const files = fs.readdirSync(dir, { encoding: "utf8", recursive: true });
+    const files = readDirRecursiveSync(dir);
 
     return files;
 }
 
 function findRetypeConfig(configPath: string) {
-    const stat = fs.statSync(path.resolve(configPath));
+    const stat = fs.statSync(configPath);
 
     if (stat.isFile()) {
         const ext = path.extname(configPath).toLowerCase();
@@ -84,29 +102,21 @@ function findRetypeConfig(configPath: string) {
     const verbose = getOptionalInput("verbose") ?? false;
     const config_path = getOptionalInput("config_path") ?? "";
 
-    const configTest = path.resolve(".");
-    const configTest2 = path.resolve(process.cwd(), ".");
-    core.info(`Config Test: ${configTest}`);
-    core.info(`Config Test 2: ${configTest2}`);
-    core.info(`Inputs AA ${output} |  ${override} |  ${verbose} | ${config_path}`);
-
     if (verbose) {
         core.info(`Inputs ${output} ${override} ${verbose} ${config_path}`);
     }
 
-    const resolvedConfigPath = findRetypeConfig(config_path);
+    const resolvedConfigPath = findRetypeConfig(path.resolve(config_path));
     const config = await readRetypeConfig(resolvedConfigPath);
 
     if (verbose) {
         core.info(`Config Detected at ${resolvedConfigPath}: ${JSON.stringify(config)}`);
     }
 
-    const mdxFilesLocations = config.input ?? ".";
-    const test = path.resolve(mdxFilesLocations);
-    const test2 = path.resolve(process.cwd(), mdxFilesLocations);
+    const mdxFilesLocations = path.resolve(config.input ?? ".");
 
     if (verbose) {
-        core.info(`Trying to resolve input folder: ${mdxFilesLocations} ${test} ${test2}`);
+        core.info(`Trying to resolve input folder: ${mdxFilesLocations}`);
     }
 
     const mdxFiles = listFiles(mdxFilesLocations);
@@ -116,6 +126,10 @@ function findRetypeConfig(configPath: string) {
     }
 
     const outputPath = output ?? config.output ?? ".retype";
+
+    if (verbose) {
+        core.info(`Outputs ${outputPath}`);
+    }
     setOutput("retype-output-path", outputPath);
 
     return;
