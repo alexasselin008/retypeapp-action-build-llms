@@ -25962,7 +25962,7 @@ var __webpack_exports__ = {};
         return files;
     }
     function findRetypeConfig(configPath) {
-        const stat = external_node_fs_default().statSync(configPath);
+        const stat = external_node_fs_default().statSync(external_node_path_default().resolve(configPath));
         if (stat.isFile()) {
             const ext = external_node_path_default().extname(configPath).toLowerCase();
             if ([

@@ -53,7 +53,7 @@ function listFiles(dir: string) {
 }
 
 function findRetypeConfig(configPath: string) {
-    const stat = fs.statSync(configPath);
+    const stat = fs.statSync(path.resolve(configPath));
 
     if (stat.isFile()) {
         const ext = path.extname(configPath).toLowerCase();
