@@ -4,7 +4,6 @@
     "version": "0.0.0",
     "description": "A GitHub Action to build both a llms.txt and llms-full.txt files for a Retype powered website.",
     "private": true,
-    "type": "module",
     "license": "Apache-2.0",
     "repository": {
         "type": "git",
