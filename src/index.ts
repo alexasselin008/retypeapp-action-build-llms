@@ -1,8 +1,8 @@
 import * as core from "@actions/core";
-import fs from "node:fs";
 import path from "node:path";
+import { LlmsFileBuilder } from "./LLMsFileBuilder.ts";
+import { readDirRecursiveSync } from "./nodeUtils.ts";
 import { readRetypeConfig } from "./readRetypeConfig.ts";
-import { RETYPE_FILENAMES } from "./retypeSchemas.ts";
 
 interface ActionInputs {
     /**
@@ -11,10 +11,10 @@ interface ActionInputs {
      */
     output?: string;
     /**
-     * JSON configuration overriding project config values.
+     * Give a brief description of the project. A short summary of the project's purpose and goals is great for LLMs file.
      * @default `""` (empty).
      */
-    override?: string;
+    description?: string;
     /**
      * Enable verbose logging during build process.
      * @default false
@@ -29,84 +29,21 @@ interface ActionInputs {
     config_path?: string;
 }
 
-interface ActionOutput {
-    /**
-     * Path to the Retype output that can be referenced in other steps
-      within the same workflow.
-     */
-    "retype-output-path"?: string;
-}
-
 function getOptionalInput<T extends keyof ActionInputs>(name: T) {
     return core.getInput(name) as ActionInputs[T];
 }
 
-function setOutput<T extends keyof ActionOutput>(name: T, value: ActionOutput[T]) {
-    core.setOutput(name, String(value));
-}
-/**
- * This is doable natively with node 22+, but we need to support node 20
- */
-function readDirRecursiveSync(dir: string) {
-    const result: string[] = [];
-
-    for (const entry of fs.readdirSync(dir, { encoding: "utf8", withFileTypes: true })) {
-        const fullPath = path.join(dir, entry.name);
-
-        if (entry.isDirectory()) {
-            result.push(...readDirRecursiveSync(fullPath));
-        } else {
-            result.push(fullPath);
-        }
-    }
-
-    return result;
-}
-
-function listFiles(dir: string) {
-    // TODO: won't work with node 20
-    const files = readDirRecursiveSync(dir);
-
-    return files;
-}
-
-function findRetypeConfig(configPath: string) {
-    const stat = fs.statSync(configPath);
-
-    if (stat.isFile()) {
-        const ext = path.extname(configPath).toLowerCase();
-        if ([".yml", ".yaml", ".json"].includes(ext)) {
-            return configPath;
-        }
-        throw new Error(`Invalid file type: ${configPath}`);
-    }
-
-    if (stat.isDirectory()) {
-        for (const filename of RETYPE_FILENAMES) {
-            const candidate = path.join(configPath, filename);
-            if (fs.existsSync(candidate)) {
-                return candidate;
-            }
-        }
-        throw new Error(
-            `No retype config found in directory: ${configPath}. Expected one of ${RETYPE_FILENAMES.join(", ")}`
-        );
-    }
-
-    throw new Error("No retype config found");
-}
-
 (async () => {
     const output = getOptionalInput("output");
-    const override = getOptionalInput("override");
     const verbose = getOptionalInput("verbose") ?? false;
+    const description = getOptionalInput("description");
     const config_path = getOptionalInput("config_path") ?? "";
 
     if (verbose) {
-        core.info(`Inputs ${output} ${override} ${verbose} ${config_path}`);
+        core.info(`Inputs: ${JSON.stringify({ output, verbose, config_path, description })}`);
     }
 
-    const resolvedConfigPath = findRetypeConfig(path.resolve(config_path));
+    const resolvedConfigPath = path.resolve(config_path);
     const config = await readRetypeConfig(resolvedConfigPath);
 
     if (verbose) {
@@ -119,10 +56,43 @@ function findRetypeConfig(configPath: string) {
         core.info(`Trying to resolve input folder: ${mdxFilesLocations}`);
     }
 
-    const mdxFiles = listFiles(mdxFilesLocations);
+    const mdxFiles = readDirRecursiveSync(mdxFilesLocations);
 
     if (verbose) {
         core.info(`Files to process: ${JSON.stringify(mdxFiles)}`);
+    }
+
+    const projectTitle = config.branding?.title;
+    const title = `# ${projectTitle} - Documentation for LLMs`;
+
+    if (!config.url) {
+        core.warning("The retype config does not have an url. We can't properly link to other files with absolute links.");
+    }
+
+    const llmsBuilder = new LlmsFileBuilder(title, config.url ?? ".");
+    llmsBuilder.addDescription(description);
+
+
+    // TODO: what if there is no url??
+    // expected output:
+    // ## Introduction
+    // [Getting Started](https://workleap.github.io/wl-logging/introduction/getting-started/)
+    // ## Reference
+    // [BrowserConsoleLogger](....)
+
+    // Samples
+
+    // ## Useful links
+    // [Home](https://retypeapp.com/)    -> Validates if this maps to
+    // [Found a bug?](https://retypeapp.com/)
+    // [Feature requests](https://retypeapp.com/)
+    // [Releases](https://retypeapp.com/)
+    // [Github](https://retypeapp.com/)
+    // [NPM](https://retypeapp.com/)
+    const content = llmsBuilder.build();
+
+    if (verbose) {
+        core.info(`LLMs.txt file: ${content}`);
     }
 
     const outputPath = output ?? config.output ?? ".retype";
@@ -130,7 +100,6 @@ function findRetypeConfig(configPath: string) {
     if (verbose) {
         core.info(`Outputs ${outputPath}`);
     }
-    setOutput("retype-output-path", outputPath);
 
     return;
 })().catch(err => {

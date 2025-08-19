@@ -9,9 +9,9 @@ inputs:
       Custom folder to store the output from the Retype build process. Default is `""` (empty).
     required: false
     default: ''
-  override:
+  description:
     description: |-
-      JSON configuration overriding project config values. Default is "" (empty).
+      Give a brief description of the project. A short summary of the project's purpose and goals is great for LLMs file.
     required: false
     default: ''
   verbose:
@@ -25,12 +25,6 @@ inputs:
       file. If a directory, Retype will look for the 'retype.[yml|yaml|json]'
       file in this directory.
     default: ''
-outputs:
-  retype-output-path:
-    description: |-
-      Path to the Retype output that can be referenced in other steps
-      within the same workflow.
-    value: ${{ steps.retype-build.outputs.retype-output-path }}
 runs:
   using: "node20"
   main: "dist/index.js"

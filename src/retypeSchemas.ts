@@ -17,6 +17,10 @@ export const RetypeConfigSchema = z.object({
     /** Public site URL used for canonical links and sitemaps. */
     url: z.string().optional(),
 
+    branding: z.object({
+        title: z.string().optional()
+    }),
+
     /**
     * If string, sets a custom CNAME value at build. If false, disables writing CNAME.
     * Defaults to writing CNAME when url is a custom domain.
@@ -36,12 +40,6 @@ export const RetypeConfigSchema = z.object({
         })
         .optional(),
 
-
-    /**
-    * Exclude files or folders from build or copy.
-    * Supports .gitignore-like patterns: ?, *, ** and !.
-    */
-    exclude: z.array(z.string()).optional(),
 
     footer: z
         .object({
