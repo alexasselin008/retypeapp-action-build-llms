@@ -1,7 +1,7 @@
 {
     "name": "@alexasselin/retypeapp-build-llms-action",
     "author": "Alexandre Asselin",
-    "version": "0.0.0",
+    "version": "0.0.1",
     "description": "A GitHub Action to build both a llms.txt and llms-full.txt files for a Retype powered website.",
     "private": true,
     "license": "Apache-2.0",
