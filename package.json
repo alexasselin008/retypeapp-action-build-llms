@@ -13,7 +13,7 @@
         "build": "rslib build --config ./rslib.build.ts",
         "lint": "pnpm run eslint && pnpm run typecheck",
         "eslint": "eslint . --max-warnings=-0 --cache --cache-location node_modules/.cache/eslint",
-        "version-action": "changeset version && git pull && pnpm build && git add -f dist/index.js && git commit",
+        "version-action": "pnpm build && git add -f dist/index.js && changeset version",
         "typecheck": "tsc",
         "test": "vitest --config vitest.config.ts --no-watch --passWithNoTests"
     },
