@@ -1,5 +1,5 @@
 node_modules
-dist
+#dist
 storybook-static
 .pnpm-debug.log*
 .netlify
