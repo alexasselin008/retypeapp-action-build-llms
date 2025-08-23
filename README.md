@@ -29,3 +29,25 @@ steps:
     branch: retype
     update-branch: true
 ```
+
+
+## LLMs files
+
+Most of this section has been copied from https://llms-txt.io/faq
+
+### What is a llms.txt file?
+
+The llms.txt file is a new web standard that provides AI systems with a streamlined, easy-to-understand version of your website content. It helps large language models (LLMs) overcome context window limitations by delivering essential information in a clean, focused format.
+
+### Format
+The llms.txt format uses simple markdown that both humans and AI can read:
+
+- H1 title defines the project or site name
+- Blockquote provides a concise summary
+- H2 headers organize documentation sections
+- Optional section marks secondary resources
+- Clear links to important content
+
+## Do i need both llms.txt and llms-full.txt?
+
+While llms.txt provides navigation structure, the optional llms-full.txt contains complete documentation content. For simpler websites, llms.txt alone is usually sufficient. For documentation sites, having both can be beneficial for AI comprehension.
