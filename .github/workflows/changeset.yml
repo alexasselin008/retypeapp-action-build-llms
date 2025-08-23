@@ -1,0 +1,52 @@
+name: Changesets
+
+# Pnpm setup based on https://github.com/pnpm/action-setup#use-cache-to-reduce-installation-time
+
+on:
+  push:
+    branches: ["main"]
+env:
+  CI: true
+
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write # required for provenance https://docs.npmjs.com/generating-provenance-statements#publishing-packages-with-provenance-via-github-actions
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ">=22.0.0"
+          check-latest: true
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build packages
+        run: pnpm build-pkg
+
+      - name: Create release Pull Request or publish to NPM
+        uses: changesets/action@v1
+        with:
+          commit: "ci(changesets): version packages"
+          title: "Changeset: New Version"
+          # This expects you to have a script called version-action which calls changeset version and commit the dist folder
+          version: pnpm version-action
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
