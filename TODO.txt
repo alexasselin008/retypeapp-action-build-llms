@@ -3,3 +3,6 @@
 - Find the best way to parse custom retype component to convert them to something that is consumable by llms. For instance Badges can be simplified to links
 
 - Replace zod with valibot
+
+
+- Detail the changeset workflow and how  the changeset Pr also build the action. and how the dist folder is in the gitignore, yet committed
