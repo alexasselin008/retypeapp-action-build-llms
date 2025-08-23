@@ -5,6 +5,7 @@
         { "repo": "alexasselin008/retypeapp-action-build-llms" }
     ],
     "commit": false,
+    "privatePackages":  { "version": true, "tag": true },
     "fixed": [],
     "linked": [],
     "access": "restricted",
