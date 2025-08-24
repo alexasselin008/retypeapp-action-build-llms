@@ -26050,7 +26050,7 @@ var __webpack_exports__ = {};
         llmsBuilder.addDescription(description);
         const outputPath = output ?? config.output ?? ".retype";
         if (verbose) lib_core.info(`Output path: ${outputPath}`);
-        const filesToConvert = test.filter((f)=>!f.isIgnored).filter((f)=>!f.isDirectory).filter((x)=>".md" === external_node_path_default().extname(x.name)).map((x)=>{
+        const filesToConvert = test.filter((f)=>!f.isIgnored).filter((f)=>"default.md" !== f.name).filter((f)=>!f.isDirectory).filter((x)=>".md" === external_node_path_default().extname(x.name)).map((x)=>{
             const ext = external_node_path_default().extname(x.name);
             const nameWithoutExt = external_node_path_default().basename(x.name, ext);
             return {

@@ -130,7 +130,7 @@ function getOptionalInput<T extends keyof ActionInputs>(name: T) {
     }
 
     // writing content
-    const filesToConvert = test.filter(f => !f.isIgnored).filter(f => !f.isDirectory).filter(x => path.extname(x.name) === ".md").map(x => {
+    const filesToConvert = test.filter(f => !f.isIgnored).filter(f => f.name !== "default.md" /** in tests it's visibility hidden */).filter(f => !f.isDirectory).filter(x => path.extname(x.name) === ".md").map(x => {
         const ext = path.extname(x.name);
         const nameWithoutExt = path.basename(x.name, ext);
 
