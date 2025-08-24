@@ -107,8 +107,8 @@ function getOptionalInput<T extends keyof ActionInputs>(name: T) {
     }
 
     await fs.promises.mkdir(path.dirname(outputPath), { recursive: true });
-    await fs.promises.writeFile(llmsBuilder.llmsFilePath, llmsBuilder.build());
-    await fs.promises.writeFile(llmsBuilder.llmsFullFilePath, llmsBuilder.buildFull());
+    await fs.promises.writeFile(path.join(outputPath, "llms.txt"), llmsBuilder.build());
+    await fs.promises.writeFile(path.join(outputPath, "llms-full.txt"), llmsBuilder.buildFull());
 
     return;
 })().catch(err => {

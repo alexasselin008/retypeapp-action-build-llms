@@ -24,17 +24,9 @@ export class LlmsFileBuilder {
         return "";
     }
 
-    get llmsFilePath() {
-        return this.#url ? path.join(this.#url, "llms.txt") : "llms.txt";
-    }
-
-    get llmsFullFilePath() {
-        return this.#url ? path.join(this.#url, "llms-full.txt") : "llms-full.txt";
-    }
-
     #createLinkToLLMsFull() {
         if (this.#url) {
-            return `\n\nFor complete documentation in a single file, see [Full Documentation](${this.llmsFullFilePath}).\n\n`;
+            return `\n\nFor complete documentation in a single file, see [Full Documentation](${path.join(this.#url, "llms-full.txt")}).\n\n`;
         }
 
         return "";

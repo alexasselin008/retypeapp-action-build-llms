@@ -22803,14 +22803,8 @@ var __webpack_exports__ = {};
             if (this.#description) return `\n> ${this.#description}\n`;
             return "";
         }
-        get llmsFilePath() {
-            return this.#url ? external_node_path_default().join(this.#url, "llms.txt") : "llms.txt";
-        }
-        get llmsFullFilePath() {
-            return this.#url ? external_node_path_default().join(this.#url, "llms-full.txt") : "llms-full.txt";
-        }
         #createLinkToLLMsFull() {
-            if (this.#url) return `\n\nFor complete documentation in a single file, see [Full Documentation](${this.llmsFullFilePath}).\n\n`;
+            if (this.#url) return `\n\nFor complete documentation in a single file, see [Full Documentation](${external_node_path_default().join(this.#url, "llms-full.txt")}).\n\n`;
             return "";
         }
         build() {
@@ -26036,8 +26030,8 @@ var __webpack_exports__ = {};
         await external_node_fs_default().promises.mkdir(external_node_path_default().dirname(outputPath), {
             recursive: true
         });
-        await external_node_fs_default().promises.writeFile(llmsBuilder.llmsFilePath, llmsBuilder.build());
-        await external_node_fs_default().promises.writeFile(llmsBuilder.llmsFullFilePath, llmsBuilder.buildFull());
+        await external_node_fs_default().promises.writeFile(external_node_path_default().join(outputPath, "llms.txt"), llmsBuilder.build());
+        await external_node_fs_default().promises.writeFile(external_node_path_default().join(outputPath, "llms-full.txt"), llmsBuilder.buildFull());
     })().catch((err)=>{
         lib_core.error(err);
         lib_core.setFailed(err.message);
