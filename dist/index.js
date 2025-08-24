@@ -22812,7 +22812,8 @@ var __webpack_exports__ = {};
             return this.build();
         }
     }
-    require("node:fs");
+    const external_node_fs_namespaceObject = require("node:fs");
+    var external_node_fs_default = /*#__PURE__*/ __webpack_require__.n(external_node_fs_namespaceObject);
     const promises_namespaceObject = require("node:fs/promises");
     var dist = __webpack_require__("./node_modules/.pnpm/yaml@2.8.1/node_modules/yaml/dist/index.js");
     Object.freeze({
@@ -25853,6 +25854,11 @@ var __webpack_exports__ = {};
     function superRefine(fn) {
         return _superRefine(fn);
     }
+    const RETYPE_FILENAMES = [
+        "retype.yml",
+        "retype.yaml",
+        "retype.json"
+    ];
     const RetypeConfigSchema = schemas_object({
         input: schemas_string().optional(),
         output: schemas_string().optional(),
@@ -25949,6 +25955,26 @@ var __webpack_exports__ = {};
             label: schemas_string().optional()
         }).optional()
     });
+    function findRetypeConfig(configPath) {
+        const stat = external_node_fs_default().statSync(configPath);
+        if (stat.isFile()) {
+            const ext = external_node_path_default().extname(configPath).toLowerCase();
+            if ([
+                ".yml",
+                ".yaml",
+                ".json"
+            ].includes(ext)) return configPath;
+            throw new Error(`Invalid file type: ${configPath}`);
+        }
+        if (stat.isDirectory()) {
+            for (const filename of RETYPE_FILENAMES){
+                const candidate = external_node_path_default().join(configPath, filename);
+                if (external_node_fs_default().existsSync(candidate)) return candidate;
+            }
+            throw new Error(`No retype config found in directory: ${configPath}. Expected one of ${RETYPE_FILENAMES.join(", ")}`);
+        }
+        throw new Error("No retype config found");
+    }
     async function readRetypeConfig(filePath) {
         const raw = await (0, promises_namespaceObject.readFile)(filePath, "utf8");
         let data;
@@ -25986,7 +26012,7 @@ var __webpack_exports__ = {};
             config_path,
             description
         })}`);
-        const resolvedConfigPath = external_node_path_default().resolve(config_path ?? ".");
+        const resolvedConfigPath = findRetypeConfig(external_node_path_default().resolve(config_path ?? "."));
         if (verbose) lib_core.info(`Config Path is ${resolvedConfigPath}}`);
         const config = await readRetypeConfig(resolvedConfigPath);
         if (verbose) lib_core.info(`Config Detected at ${resolvedConfigPath}: ${JSON.stringify(config)}`);

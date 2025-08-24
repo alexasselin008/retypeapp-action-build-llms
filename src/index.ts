@@ -1,7 +1,7 @@
 import * as core from "@actions/core";
 import path from "node:path";
 import { LlmsFileBuilder } from "./LLMsFileBuilder.ts";
-import { readRetypeConfig } from "./readRetypeConfig.ts";
+import { findRetypeConfig, readRetypeConfig } from "./readRetypeConfig.ts";
 
 interface ActionInputs {
     /**
@@ -42,7 +42,7 @@ function getOptionalInput<T extends keyof ActionInputs>(name: T) {
         core.info(`Inputs: ${JSON.stringify({ output, verbose, config_path, description })}`);
     }
 
-    const resolvedConfigPath = path.resolve(config_path ?? ".");
+    const resolvedConfigPath = findRetypeConfig(path.resolve(config_path ?? "."));
 
     if (verbose) {
         core.info(`Config Path is ${resolvedConfigPath}}`);
