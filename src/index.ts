@@ -45,10 +45,6 @@ function getOptionalInput<T extends keyof ActionInputs>(name: T) {
 
     const resolvedConfigPath = findRetypeConfig(path.resolve(config_path ?? "."));
 
-    if (verbose) {
-        core.info(`Config Path is ${resolvedConfigPath}}`);
-    }
-
     const config = await readRetypeConfig(resolvedConfigPath);
 
     if (verbose) {
@@ -61,11 +57,41 @@ function getOptionalInput<T extends keyof ActionInputs>(name: T) {
         core.info(`Trying to resolve input folder: ${mdxFilesLocations}`);
     }
 
+    const allDocsRootPaths = fs.readdirSync(mdxFilesLocations, { encoding: "utf8", withFileTypes: true });
+    const test = allDocsRootPaths.map(dirent => {
+        const isDir = dirent.isDirectory();
+        const name = dirent.name;
+
+        let directoryInformationFile = "";
+        if (isDir) {
+            // Look for either index.md or index.yml
+            const indexMd = path.join(mdxFilesLocations, name, "index.md");
+            const indexYml = path.join(mdxFilesLocations, name, "index.yml");
+            if (fs.existsSync(indexMd)) {
+                directoryInformationFile = indexMd;
+            } else if (fs.existsSync(indexYml)) {
+                directoryInformationFile = indexYml;
+            }
+        }
+
+        let isIgnored = false;
+        if (path.extname(name) !== ".md" || path.extname(name) !== ".yml") {
+            isIgnored = true;
+        }
+
+        return {
+            isDirectory: isDir,
+            name,
+            directoryInformationFile,
+            isIgnored
+        };
+    });
     // const mdxFiles = readDirRecursiveSync(mdxFilesLocations);
 
-    // if (verbose) {
-    //     core.info(`Files to process: ${JSON.stringify(mdxFiles)}`);
-    // }
+    if (verbose) {
+        core.info(`Files to process: ${JSON.stringify(test)}`);
+    }
+
 
     const projectTitle = config.branding?.title;
     const title = `# ${projectTitle} - Documentation for LLMs`;
@@ -94,21 +120,28 @@ function getOptionalInput<T extends keyof ActionInputs>(name: T) {
     // [Releases](https://retypeapp.com/)
     // [Github](https://retypeapp.com/)
     // [NPM](https://retypeapp.com/)
-    const content = llmsBuilder.build();
-
-    if (verbose) {
-        core.info(`LLMs.txt file: ${content}`);
-    }
 
     const outputPath = output ?? config.output ?? ".retype";
 
     if (verbose) {
-        core.info(`Outputs ${outputPath}`);
+        core.info(`Output path: ${outputPath}`);
+    }
+
+    // writing content
+    const filesToConvert = test.filter(f => !f.isIgnored).filter(f => !f.isDirectory).filter(x => path.extname(x.name) === ".md").map(x => ({
+        input: x.name,
+        output: path.join(outputPath, x.name.replace(/\.md$/, ".txt"))
+    }));
+
+    if (verbose) {
+        core.info(`Files to convert: ${filesToConvert}`);
     }
 
     await fs.promises.mkdir(path.dirname(outputPath), { recursive: true });
     await fs.promises.writeFile(path.join(outputPath, "llms.txt"), llmsBuilder.build());
     await fs.promises.writeFile(path.join(outputPath, "llms-full.txt"), llmsBuilder.buildFull());
+
+    core.info("Retype build LLMs files completed successfully");
 
     return;
 })().catch(err => {

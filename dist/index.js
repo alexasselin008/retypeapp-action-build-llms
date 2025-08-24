@@ -22804,11 +22804,11 @@ var __webpack_exports__ = {};
             return "";
         }
         #createLinkToLLMsFull() {
-            if (this.#url) return `\n\nFor complete documentation in a single file, see [Full Documentation](${external_node_path_default().join(this.#url, "llms-full.txt")}).\n\n`;
+            if (this.#url) return `\nFor complete documentation in a single file, see [Full Documentation](${external_node_path_default().join(this.#url, "llms-full.txt")}).\n`;
             return "";
         }
         build() {
-            return this.#title + "\n" + this.#createDescription() + this.#createLinkToLLMsFull() + "\n" + this.#content;
+            return "\n" + this.#title + "\n" + this.#createDescription() + this.#createLinkToLLMsFull() + "\n" + this.#content;
         }
         buildFull() {
             return this.#title + "\n" + this.#createDescription() + "\n" + this.#content;
@@ -26013,25 +26013,52 @@ var __webpack_exports__ = {};
             description
         })}`);
         const resolvedConfigPath = findRetypeConfig(external_node_path_default().resolve(config_path ?? "."));
-        if (verbose) lib_core.info(`Config Path is ${resolvedConfigPath}}`);
         const config = await readRetypeConfig(resolvedConfigPath);
         if (verbose) lib_core.info(`Config Detected at ${resolvedConfigPath}: ${JSON.stringify(config)}`);
         const mdxFilesLocations = external_node_path_default().resolve(config.input ?? ".");
         if (verbose) lib_core.info(`Trying to resolve input folder: ${mdxFilesLocations}`);
+        const allDocsRootPaths = external_node_fs_default().readdirSync(mdxFilesLocations, {
+            encoding: "utf8",
+            withFileTypes: true
+        });
+        const test = allDocsRootPaths.map((dirent)=>{
+            const isDir = dirent.isDirectory();
+            const name = dirent.name;
+            let directoryInformationFile = "";
+            if (isDir) {
+                const indexMd = external_node_path_default().join(mdxFilesLocations, name, "index.md");
+                const indexYml = external_node_path_default().join(mdxFilesLocations, name, "index.yml");
+                if (external_node_fs_default().existsSync(indexMd)) directoryInformationFile = indexMd;
+                else if (external_node_fs_default().existsSync(indexYml)) directoryInformationFile = indexYml;
+            }
+            let isIgnored = false;
+            if (".md" !== external_node_path_default().extname(name) || ".yml" !== external_node_path_default().extname(name)) isIgnored = true;
+            return {
+                isDirectory: isDir,
+                name,
+                directoryInformationFile,
+                isIgnored
+            };
+        });
+        if (verbose) lib_core.info(`Files to process: ${JSON.stringify(test)}`);
         const projectTitle = config.branding?.title;
         const title = `# ${projectTitle} - Documentation for LLMs`;
         if (!config.url) lib_core.warning("The retype config does not have an url. We can't properly link to other files with absolute links.");
         const llmsBuilder = new LlmsFileBuilder(title, config.url ?? ".");
         llmsBuilder.addDescription(description);
-        const content = llmsBuilder.build();
-        if (verbose) lib_core.info(`LLMs.txt file: ${content}`);
         const outputPath = output ?? config.output ?? ".retype";
-        if (verbose) lib_core.info(`Outputs ${outputPath}`);
+        if (verbose) lib_core.info(`Output path: ${outputPath}`);
+        const filesToConvert = test.filter((f)=>!f.isIgnored).filter((f)=>!f.isDirectory).filter((x)=>".md" === external_node_path_default().extname(x.name)).map((x)=>({
+                input: x.name,
+                output: external_node_path_default().join(outputPath, x.name.replace(/\.md$/, ".txt"))
+            }));
+        if (verbose) lib_core.info(`Files to convert: ${filesToConvert}`);
         await external_node_fs_default().promises.mkdir(external_node_path_default().dirname(outputPath), {
             recursive: true
         });
         await external_node_fs_default().promises.writeFile(external_node_path_default().join(outputPath, "llms.txt"), llmsBuilder.build());
         await external_node_fs_default().promises.writeFile(external_node_path_default().join(outputPath, "llms-full.txt"), llmsBuilder.buildFull());
+        lib_core.info("Retype build LLMs files completed successfully");
     })().catch((err)=>{
         lib_core.error(err);
         lib_core.setFailed(err.message);

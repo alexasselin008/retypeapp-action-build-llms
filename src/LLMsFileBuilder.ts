@@ -26,7 +26,7 @@ export class LlmsFileBuilder {
 
     #createLinkToLLMsFull() {
         if (this.#url) {
-            return `\n\nFor complete documentation in a single file, see [Full Documentation](${path.join(this.#url, "llms-full.txt")}).\n\n`;
+            return `\nFor complete documentation in a single file, see [Full Documentation](${path.join(this.#url, "llms-full.txt")}).\n`;
         }
 
         return "";
@@ -34,7 +34,7 @@ export class LlmsFileBuilder {
 
     build(): string {
         // TODO:
-        return this.#title + "\n" + this.#createDescription() + this.#createLinkToLLMsFull() + "\n" + this.#content;
+        return "\n" + this.#title + "\n" + this.#createDescription() + this.#createLinkToLLMsFull() + "\n" + this.#content;
     }
 
     buildFull(): string {
