@@ -107,11 +107,8 @@ function getOptionalInput<T extends keyof ActionInputs>(name: T) {
     }
 
     await fs.promises.mkdir(path.dirname(outputPath), { recursive: true });
-    const llmsFilePath = path.join(outputPath, "llms.txt");
-    const llmsFullFilePath = path.join(outputPath, "llms-full.txt");
-
-    await fs.promises.writeFile(llmsFilePath, content);
-    await fs.promises.writeFile(llmsFullFilePath, content);
+    await fs.promises.writeFile(llmsBuilder.llmsFilePath, llmsBuilder.build());
+    await fs.promises.writeFile(llmsBuilder.llmsFullFilePath, llmsBuilder.buildFull());
 
     return;
 })().catch(err => {

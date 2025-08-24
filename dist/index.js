@@ -22800,18 +22800,24 @@ var __webpack_exports__ = {};
             this.#description = description;
         }
         #createDescription() {
-            if (this.#description) return `\n\n >${this.#description}\n\n`;
+            if (this.#description) return `\n> ${this.#description}\n`;
             return "";
         }
+        get llmsFilePath() {
+            return this.#url ? `${this.#url}/llms.txt` : "llms.txt";
+        }
+        get llmsFullFilePath() {
+            return this.#url ? `${this.#url}/llms-full.txt` : "llms-full.txt";
+        }
         #createLinkToLLMsFull() {
-            if (this.#url) return `\n\nFor complete documentation in a single file, see [Full Documentation](${this.#url}/llms-full.txt).\n\n`;
+            if (this.#url) return `\n\nFor complete documentation in a single file, see [Full Documentation](${this.llmsFullFilePath}).\n\n`;
             return "";
         }
         build() {
             return this.#title + "\n" + this.#createDescription() + this.#createLinkToLLMsFull() + "\n" + this.#content;
         }
         buildFull() {
-            return this.build();
+            return this.#title + "\n" + this.#createDescription() + "\n" + this.#content;
         }
     }
     const promises_namespaceObject = require("node:fs/promises");
@@ -26030,10 +26036,8 @@ var __webpack_exports__ = {};
         await external_node_fs_default().promises.mkdir(external_node_path_default().dirname(outputPath), {
             recursive: true
         });
-        const llmsFilePath = external_node_path_default().join(outputPath, "llms.txt");
-        const llmsFullFilePath = external_node_path_default().join(outputPath, "llms-full.txt");
-        await external_node_fs_default().promises.writeFile(llmsFilePath, content);
-        await external_node_fs_default().promises.writeFile(llmsFullFilePath, content);
+        await external_node_fs_default().promises.writeFile(llmsBuilder.llmsFilePath, llmsBuilder.build());
+        await external_node_fs_default().promises.writeFile(llmsBuilder.llmsFullFilePath, llmsBuilder.buildFull());
     })().catch((err)=>{
         lib_core.error(err);
         lib_core.setFailed(err.message);

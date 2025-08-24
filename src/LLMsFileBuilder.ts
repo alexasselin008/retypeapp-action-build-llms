@@ -16,15 +16,23 @@ export class LlmsFileBuilder {
 
     #createDescription() {
         if (this.#description) {
-            return `\n\n >${this.#description}\n\n`;
+            return `\n> ${this.#description}\n`;
         }
 
         return "";
     }
 
+    get llmsFilePath() {
+        return this.#url ? `${this.#url}/llms.txt` : "llms.txt";
+    }
+
+    get llmsFullFilePath() {
+        return this.#url ? `${this.#url}/llms-full.txt` : "llms-full.txt";
+    }
+
     #createLinkToLLMsFull() {
         if (this.#url) {
-            return `\n\nFor complete documentation in a single file, see [Full Documentation](${this.#url}/llms-full.txt).\n\n`;
+            return `\n\nFor complete documentation in a single file, see [Full Documentation](${this.llmsFullFilePath}).\n\n`;
         }
 
         return "";
@@ -37,6 +45,6 @@ export class LlmsFileBuilder {
 
     buildFull(): string {
         // TODO:
-        return this.build();
+        return this.#title + "\n" + this.#createDescription() + "\n" + this.#content;
     }
 }
