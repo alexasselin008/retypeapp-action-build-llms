@@ -1,3 +1,5 @@
+import path from "node:path";
+
 export class LlmsFileBuilder {
     #title: string | undefined;
     #description: string | undefined;
@@ -23,11 +25,11 @@ export class LlmsFileBuilder {
     }
 
     get llmsFilePath() {
-        return this.#url ? `${this.#url}/llms.txt` : "llms.txt";
+        return this.#url ? path.join(this.#url, "llms.txt") : "llms.txt";
     }
 
     get llmsFullFilePath() {
-        return this.#url ? `${this.#url}/llms-full.txt` : "llms-full.txt";
+        return this.#url ? path.join(this.#url, "llms-full.txt") : "llms-full.txt";
     }
 
     #createLinkToLLMsFull() {

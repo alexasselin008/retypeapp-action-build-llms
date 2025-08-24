@@ -22804,10 +22804,10 @@ var __webpack_exports__ = {};
             return "";
         }
         get llmsFilePath() {
-            return this.#url ? `${this.#url}/llms.txt` : "llms.txt";
+            return this.#url ? external_node_path_default().join(this.#url, "llms.txt") : "llms.txt";
         }
         get llmsFullFilePath() {
-            return this.#url ? `${this.#url}/llms-full.txt` : "llms-full.txt";
+            return this.#url ? external_node_path_default().join(this.#url, "llms-full.txt") : "llms-full.txt";
         }
         #createLinkToLLMsFull() {
             if (this.#url) return `\n\nFor complete documentation in a single file, see [Full Documentation](${this.llmsFullFilePath}).\n\n`;
