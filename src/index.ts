@@ -42,7 +42,12 @@ function getOptionalInput<T extends keyof ActionInputs>(name: T) {
         core.info(`Inputs: ${JSON.stringify({ output, verbose, config_path, description })}`);
     }
 
-    const resolvedConfigPath = path.resolve(config_path);
+    const resolvedConfigPath = path.resolve(config_path ?? ".");
+
+    if (verbose) {
+        core.info(`Config Path is ${resolvedConfigPath}}`);
+    }
+
     const config = await readRetypeConfig(resolvedConfigPath);
 
     if (verbose) {
