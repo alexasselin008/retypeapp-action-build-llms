@@ -1,4 +1,5 @@
 import * as core from "@actions/core";
+import fs from "node:fs";
 import path from "node:path";
 import { LlmsFileBuilder } from "./LLMsFileBuilder.ts";
 import { findRetypeConfig, readRetypeConfig } from "./readRetypeConfig.ts";
@@ -104,6 +105,13 @@ function getOptionalInput<T extends keyof ActionInputs>(name: T) {
     if (verbose) {
         core.info(`Outputs ${outputPath}`);
     }
+
+    await fs.promises.mkdir(path.dirname(outputPath), { recursive: true });
+    const llmsFilePath = path.join(outputPath, "llms.txt");
+    const llmsFullFilePath = path.join(outputPath, "llms-full.txt");
+
+    await fs.promises.writeFile(llmsFilePath, content);
+    await fs.promises.writeFile(llmsFullFilePath, content);
 
     return;
 })().catch(err => {

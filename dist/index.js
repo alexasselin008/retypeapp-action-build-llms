@@ -22782,6 +22782,8 @@ var __webpack_exports__ = {};
 (()=>{
     "use strict";
     var lib_core = __webpack_require__("./node_modules/.pnpm/@actions+core@1.11.1/node_modules/@actions/core/lib/core.js");
+    const external_node_fs_namespaceObject = require("node:fs");
+    var external_node_fs_default = /*#__PURE__*/ __webpack_require__.n(external_node_fs_namespaceObject);
     const external_node_path_namespaceObject = require("node:path");
     var external_node_path_default = /*#__PURE__*/ __webpack_require__.n(external_node_path_namespaceObject);
     class LlmsFileBuilder {
@@ -22812,8 +22814,6 @@ var __webpack_exports__ = {};
             return this.build();
         }
     }
-    const external_node_fs_namespaceObject = require("node:fs");
-    var external_node_fs_default = /*#__PURE__*/ __webpack_require__.n(external_node_fs_namespaceObject);
     const promises_namespaceObject = require("node:fs/promises");
     var dist = __webpack_require__("./node_modules/.pnpm/yaml@2.8.1/node_modules/yaml/dist/index.js");
     Object.freeze({
@@ -26027,6 +26027,13 @@ var __webpack_exports__ = {};
         if (verbose) lib_core.info(`LLMs.txt file: ${content}`);
         const outputPath = output ?? config.output ?? ".retype";
         if (verbose) lib_core.info(`Outputs ${outputPath}`);
+        await external_node_fs_default().promises.mkdir(external_node_path_default().dirname(outputPath), {
+            recursive: true
+        });
+        const llmsFilePath = external_node_path_default().join(outputPath, "llms.txt");
+        const llmsFullFilePath = external_node_path_default().join(outputPath, "llms-full.txt");
+        await external_node_fs_default().promises.writeFile(llmsFilePath, content);
+        await external_node_fs_default().promises.writeFile(llmsFullFilePath, content);
     })().catch((err)=>{
         lib_core.error(err);
         lib_core.setFailed(err.message);
