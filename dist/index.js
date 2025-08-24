@@ -26064,6 +26064,9 @@ var __webpack_exports__ = {};
         });
         await external_node_fs_default().promises.writeFile(external_node_path_default().join(outputPath, "llms.txt"), llmsBuilder.build());
         await external_node_fs_default().promises.writeFile(external_node_path_default().join(outputPath, "llms-full.txt"), llmsBuilder.buildFull());
+        await Promise.all(filesToConvert.map((x)=>external_node_fs_default().promises.mkdir(external_node_path_default().dirname(x.output), {
+                recursive: true
+            }).then(()=>external_node_fs_default().promises.copyFile(x.input, x.output))));
         lib_core.info("Retype build LLMs files completed successfully");
     })().catch((err)=>{
         lib_core.error(err);

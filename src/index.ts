@@ -149,6 +149,12 @@ function getOptionalInput<T extends keyof ActionInputs>(name: T) {
     await fs.promises.writeFile(path.join(outputPath, "llms.txt"), llmsBuilder.build());
     await fs.promises.writeFile(path.join(outputPath, "llms-full.txt"), llmsBuilder.buildFull());
 
+    await Promise.all(filesToConvert.map(x => {
+        return fs.promises.mkdir(path.dirname(x.output), { recursive: true }).then(() => {
+            return fs.promises.copyFile(x.input, x.output);
+        });
+    }));
+
     core.info("Retype build LLMs files completed successfully");
 
     return;
