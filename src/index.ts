@@ -61,12 +61,13 @@ function getOptionalInput<T extends keyof ActionInputs>(name: T) {
     const test = allDocsRootPaths.map(dirent => {
         const isDir = dirent.isDirectory();
         const name = dirent.name;
+        const fullPath = path.join(dirent.parentPath, name);
 
         let directoryInformationFile = "";
         if (isDir) {
             // Look for either index.md or index.yml
-            const indexMd = path.join(mdxFilesLocations, name, "index.md");
-            const indexYml = path.join(mdxFilesLocations, name, "index.yml");
+            const indexMd = path.join(fullPath, "index.md");
+            const indexYml = path.join(fullPath, "index.yml");
             if (fs.existsSync(indexMd)) {
                 directoryInformationFile = indexMd;
             } else if (fs.existsSync(indexYml)) {
@@ -75,13 +76,14 @@ function getOptionalInput<T extends keyof ActionInputs>(name: T) {
         }
 
         let isIgnored = false;
-        if (path.extname(name) !== ".md" || path.extname(name) !== ".yml") {
+        if (path.extname(name) !== ".md" && path.extname(name) !== ".yml") {
             isIgnored = true;
         }
 
         return {
             isDirectory: isDir,
             name,
+            fullPath: fullPath,
             directoryInformationFile,
             isIgnored
         };
@@ -128,10 +130,16 @@ function getOptionalInput<T extends keyof ActionInputs>(name: T) {
     }
 
     // writing content
-    const filesToConvert = test.filter(f => !f.isIgnored).filter(f => !f.isDirectory).filter(x => path.extname(x.name) === ".md").map(x => ({
-        input: x.name,
-        output: path.join(outputPath, x.name.replace(/\.md$/, ".txt"))
-    }));
+    const filesToConvert = test.filter(f => !f.isIgnored).filter(f => !f.isDirectory).filter(x => path.extname(x.name) === ".md").map(x => {
+        const ext = path.extname(x.name);
+        const nameWithoutExt = path.basename(x.name, ext);
+
+        return {
+            input: x.fullPath,
+            // /about.md becomes /about/index.txt
+            output: path.join(outputPath, nameWithoutExt, "index.txt")
+        };
+    });
 
     if (verbose) {
         core.info(`Files to convert: ${filesToConvert}`);

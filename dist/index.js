@@ -26024,18 +26024,20 @@ var __webpack_exports__ = {};
         const test = allDocsRootPaths.map((dirent)=>{
             const isDir = dirent.isDirectory();
             const name = dirent.name;
+            const fullPath = external_node_path_default().join(dirent.parentPath, name);
             let directoryInformationFile = "";
             if (isDir) {
-                const indexMd = external_node_path_default().join(mdxFilesLocations, name, "index.md");
-                const indexYml = external_node_path_default().join(mdxFilesLocations, name, "index.yml");
+                const indexMd = external_node_path_default().join(fullPath, "index.md");
+                const indexYml = external_node_path_default().join(fullPath, "index.yml");
                 if (external_node_fs_default().existsSync(indexMd)) directoryInformationFile = indexMd;
                 else if (external_node_fs_default().existsSync(indexYml)) directoryInformationFile = indexYml;
             }
             let isIgnored = false;
-            if (".md" !== external_node_path_default().extname(name) || ".yml" !== external_node_path_default().extname(name)) isIgnored = true;
+            if (".md" !== external_node_path_default().extname(name) && ".yml" !== external_node_path_default().extname(name)) isIgnored = true;
             return {
                 isDirectory: isDir,
                 name,
+                fullPath: fullPath,
                 directoryInformationFile,
                 isIgnored
             };
@@ -26048,10 +26050,14 @@ var __webpack_exports__ = {};
         llmsBuilder.addDescription(description);
         const outputPath = output ?? config.output ?? ".retype";
         if (verbose) lib_core.info(`Output path: ${outputPath}`);
-        const filesToConvert = test.filter((f)=>!f.isIgnored).filter((f)=>!f.isDirectory).filter((x)=>".md" === external_node_path_default().extname(x.name)).map((x)=>({
-                input: x.name,
-                output: external_node_path_default().join(outputPath, x.name.replace(/\.md$/, ".txt"))
-            }));
+        const filesToConvert = test.filter((f)=>!f.isIgnored).filter((f)=>!f.isDirectory).filter((x)=>".md" === external_node_path_default().extname(x.name)).map((x)=>{
+            const ext = external_node_path_default().extname(x.name);
+            const nameWithoutExt = external_node_path_default().basename(x.name, ext);
+            return {
+                input: x.fullPath,
+                output: external_node_path_default().join(outputPath, nameWithoutExt, "index.txt")
+            };
+        });
         if (verbose) lib_core.info(`Files to convert: ${filesToConvert}`);
         await external_node_fs_default().promises.mkdir(external_node_path_default().dirname(outputPath), {
             recursive: true
