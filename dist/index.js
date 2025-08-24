@@ -25986,7 +25986,8 @@ var __webpack_exports__ = {};
             config_path,
             description
         })}`);
-        const resolvedConfigPath = external_node_path_default().resolve(config_path);
+        const resolvedConfigPath = external_node_path_default().resolve(config_path ?? ".");
+        if (verbose) lib_core.info(`Config Path is ${resolvedConfigPath}}`);
         const config = await readRetypeConfig(resolvedConfigPath);
         if (verbose) lib_core.info(`Config Detected at ${resolvedConfigPath}: ${JSON.stringify(config)}`);
         const mdxFilesLocations = external_node_path_default().resolve(config.input ?? ".");
