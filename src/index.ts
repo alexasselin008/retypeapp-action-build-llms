@@ -1,7 +1,6 @@
 import * as core from "@actions/core";
 import path from "node:path";
 import { LlmsFileBuilder } from "./LLMsFileBuilder.ts";
-import { readDirRecursiveSync } from "./nodeUtils.ts";
 import { readRetypeConfig } from "./readRetypeConfig.ts";
 
 interface ActionInputs {
@@ -56,11 +55,11 @@ function getOptionalInput<T extends keyof ActionInputs>(name: T) {
         core.info(`Trying to resolve input folder: ${mdxFilesLocations}`);
     }
 
-    const mdxFiles = readDirRecursiveSync(mdxFilesLocations);
+    // const mdxFiles = readDirRecursiveSync(mdxFilesLocations);
 
-    if (verbose) {
-        core.info(`Files to process: ${JSON.stringify(mdxFiles)}`);
-    }
+    // if (verbose) {
+    //     core.info(`Files to process: ${JSON.stringify(mdxFiles)}`);
+    // }
 
     const projectTitle = config.branding?.title;
     const title = `# ${projectTitle} - Documentation for LLMs`;

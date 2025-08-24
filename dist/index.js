@@ -22812,20 +22812,7 @@ var __webpack_exports__ = {};
             return this.build();
         }
     }
-    const external_node_fs_namespaceObject = require("node:fs");
-    var external_node_fs_default = /*#__PURE__*/ __webpack_require__.n(external_node_fs_namespaceObject);
-    function readDirRecursiveSync(dir) {
-        const result = [];
-        for (const entry of external_node_fs_default().readdirSync(dir, {
-            encoding: "utf8",
-            withFileTypes: true
-        })){
-            const fullPath = external_node_path_default().join(dir, entry.name);
-            if (entry.isDirectory()) result.push(...readDirRecursiveSync(fullPath));
-            else result.push(fullPath);
-        }
-        return result;
-    }
+    require("node:fs");
     const promises_namespaceObject = require("node:fs/promises");
     var dist = __webpack_require__("./node_modules/.pnpm/yaml@2.8.1/node_modules/yaml/dist/index.js");
     Object.freeze({
@@ -26004,8 +25991,6 @@ var __webpack_exports__ = {};
         if (verbose) lib_core.info(`Config Detected at ${resolvedConfigPath}: ${JSON.stringify(config)}`);
         const mdxFilesLocations = external_node_path_default().resolve(config.input ?? ".");
         if (verbose) lib_core.info(`Trying to resolve input folder: ${mdxFilesLocations}`);
-        const mdxFiles = readDirRecursiveSync(mdxFilesLocations);
-        if (verbose) lib_core.info(`Files to process: ${JSON.stringify(mdxFiles)}`);
         const projectTitle = config.branding?.title;
         const title = `# ${projectTitle} - Documentation for LLMs`;
         if (!config.url) lib_core.warning("The retype config does not have an url. We can't properly link to other files with absolute links.");
