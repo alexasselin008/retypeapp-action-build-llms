@@ -142,7 +142,7 @@ function getOptionalInput<T extends keyof ActionInputs>(name: T) {
     });
 
     if (verbose) {
-        core.info(`Files to convert: ${filesToConvert}`);
+        core.info(`Files to convert: ${JSON.stringify(filesToConvert)}`);
     }
 
     await fs.promises.mkdir(path.dirname(outputPath), { recursive: true });

@@ -26058,7 +26058,7 @@ var __webpack_exports__ = {};
                 output: external_node_path_default().join(outputPath, nameWithoutExt, "index.txt")
             };
         });
-        if (verbose) lib_core.info(`Files to convert: ${filesToConvert}`);
+        if (verbose) lib_core.info(`Files to convert: ${JSON.stringify(filesToConvert)}`);
         await external_node_fs_default().promises.mkdir(external_node_path_default().dirname(outputPath), {
             recursive: true
         });
